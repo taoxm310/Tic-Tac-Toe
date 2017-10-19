@@ -52,7 +52,6 @@ function checkWin(newBoard, player){
     let winData = null
     //
     for(let [index,win] of winCombos.entries()){
-        console.log(check)
         if(win.every(elem => check.indexOf(elem) > -1)) {
             winData = {
                 index,
@@ -93,11 +92,66 @@ function checkTie(){
     return false
 }
 function computerStep(){
-    let empty = emptyPos()
-    let emptyLength = empty.length
-    let coin = Math.floor(Math.random() * 10)
-    if(coin < emptyLength){
-        return empty[coin]
+    // let empty = emptyPos()
+    // let emptyLength = empty.length
+    // let coin = Math.floor(Math.random() * 10)
+    // if(coin < emptyLength){
+    //     return empty[coin]
+    // }
+    // return empty[0]
+    return minimax(origboard,computerPlayer).index
+}
+
+function minimax(newBoard, player){
+    var availPos = emptyPos()
+
+    if(checkWin(newBoard, humanPlayer)){
+        return {score: -10}
+    } else if(checkWin(newBoard, computerPlayer)){
+        return {score: 10}
+    } else if(availPos.length === 0){
+        return {score: 0}
     }
-    return empty[0]
+
+    var moves = []
+
+    for(var i = 0; i< availPos.length; i++){
+        var move = {}
+        move.index = newBoard[availPos[i]]
+        newBoard[availPos[i]] = player
+        if(player == computerPlayer){
+            var result = minimax(newBoard,humanPlayer)
+            move.score = result.score
+        } else {
+            var result = minimax(newBoard,computerPlayer)
+            move.score = result.score
+        }
+        
+        //reset board
+        newBoard[availPos[i]] = move.index
+
+        moves.push(move)
+    }
+
+    var bestmove
+
+    if(player === computerPlayer) {
+        var bestScore = -Infinity
+        for(var i = 0; i < moves.length; i++){
+            if(moves[i].score > bestScore){
+                bestScore = moves[i].score
+                bestMove = i
+            }
+        }
+    } else {
+        var bestScore = Infinity
+        for(var i = 0; i < moves.length; i++){
+            if(moves[i].score < bestScore){
+                bestScore = moves[i].score
+                bestMove = i
+            }
+        }
+    }
+
+    return moves[bestMove]
 }
