@@ -1,1 +1,1 @@
-implement Tic Tac Toe game
+unbeatable Tic Tac Toe game with minimax algrithm.
